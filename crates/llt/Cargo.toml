@@ -8,7 +8,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-zip = { version = "8.6.0", default-features = false, features = ["deflate"] }
+zip = { version = "9.5.1", default-features = false, features = ["deflate"] }
 # Optional Serialize/Deserialize on the public data types, for binding
 # layers (wasm) and bridges that hand plain values to another language.
 serde = { version = "1", features = ["derive"], optional = true }
