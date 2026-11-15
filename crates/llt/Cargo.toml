@@ -1,10 +1,12 @@
 [package]
 name = "llt"
 license = "MIT"
-publish = false
+license-file = "../../LICENSE"
+readme = "../../README.md"
+include = ["/src", "!/src/bin"]
 description = "Offline Lulutong timetable parser and queries"
 repository = "https://github.com/situ2001/llt"
-version = "0.1.0"
+version.workspace = true
 edition = "2024"
 
 [dependencies]

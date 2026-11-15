@@ -1,0 +1,50 @@
+name: Prepare release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'SemVer version (without v prefix)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: prepare-release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: rustup show
+      - name: Set version
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: node scripts/release.mjs set-version "$RELEASE_VERSION"
+      - run: node scripts/release.mjs install-bindgen
+      - run: node scripts/release.mjs build
+      - uses: peter-evans/create-pull-request@v8
+        with:
+          branch: release/v${{ inputs.version }}
+          commit-message: 'chore: prepare release v${{ inputs.version }}'
+          title: 'Release v${{ inputs.version }}'
+          body: |
+            Synchronizes the Rust and npm versions, updates Cargo.lock, and rebuilds the WebAssembly dist.
+            Merge after reviewing the changes and passing CI. Publishing is manual.
+          add-paths: |
+            Cargo.toml
+            Cargo.lock
+            packages/llt-wasm/package.json
+            packages/llt-wasm/llt.js
+            packages/llt-wasm/llt.d.ts
+            packages/llt-wasm/llt_bg.wasm
+            packages/llt-wasm/llt_bg.wasm.d.ts

@@ -1,10 +1,23 @@
 name: CI
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   synthetic-fixture:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - run: rustup show
       - run: cargo test -p llt --test synthetic
       - run: cargo check --workspace --all-targets --locked
+  wasm-dist:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: rustup show
+      - run: node scripts/release.mjs check-versions
+      - run: node scripts/release.mjs install-bindgen
+      - run: node scripts/release.mjs check-dist

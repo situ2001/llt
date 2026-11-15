@@ -2,6 +2,9 @@
 resolver = "3"
 members = ["crates/llt", "packages/llt-wasm"]
 
+[workspace.package]
+version = "0.1.1"
+
 [workspace.lints.clippy]
 all = { level = "deny", priority = -1 }
 unwrap_used = "deny"
