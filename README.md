@@ -13,15 +13,6 @@ wasm-bindgen --target web --out-dir packages/llt-wasm --out-name llt \
   target/wasm32-unknown-unknown/release/llt_wasm.wasm
 ```
 
-The synthetic fixture test requires no external data. The `real-data-tests`
-feature enables checks against locally supplied current and reference offline
-data packages via `LLT_CURRENT_PACKAGE` and `LLT_REFERENCE_PACKAGE`. The
-reference checks expect the 20260904 package.
-
-The parser originated in [12306-parser](https://github.com/situ2001/12306-parser).
-Its format was derived from analysis of Lulutong data; the library does not
-include or distribute that data.
-
 The examples and benchmark read a user-supplied offline data package from
 `LLT_PACKAGE`, for example:
 
