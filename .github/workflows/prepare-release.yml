@@ -32,19 +32,36 @@ jobs:
         run: node scripts/release.mjs set-version "$RELEASE_VERSION"
       - run: node scripts/release.mjs install-bindgen
       - run: node scripts/release.mjs build
-      - uses: peter-evans/create-pull-request@v8
-        with:
-          branch: release/v${{ inputs.version }}
-          commit-message: 'chore: prepare release v${{ inputs.version }}'
-          title: 'Release v${{ inputs.version }}'
-          body: |
-            Synchronizes the Rust and npm versions, updates Cargo.lock, and rebuilds the WebAssembly dist.
-            Merge after reviewing the changes and passing CI. Publishing is manual.
-          add-paths: |
-            Cargo.toml
-            Cargo.lock
-            packages/llt-wasm/package.json
-            packages/llt-wasm/llt.js
-            packages/llt-wasm/llt.d.ts
-            packages/llt-wasm/llt_bg.wasm
-            packages/llt-wasm/llt_bg.wasm.d.ts
+      - name: Create or update release PR
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BASE_BRANCH: ${{ github.event.repository.default_branch }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          branch="release/v$RELEASE_VERSION"
+          git switch -c "$branch"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Cargo.toml Cargo.lock packages/llt-wasm/package.json \
+            packages/llt-wasm/llt.js packages/llt-wasm/llt.d.ts \
+            packages/llt-wasm/llt_bg.wasm packages/llt-wasm/llt_bg.wasm.d.ts
+          if git diff --cached --quiet; then
+            echo "No release changes for v$RELEASE_VERSION."
+            exit 0
+          fi
+          git commit -m "chore: prepare release v$RELEASE_VERSION"
+          expected="$(git ls-remote origin "refs/heads/$branch" | cut -f1)"
+          git push --force-with-lease="refs/heads/$branch:$expected" \
+            origin "HEAD:refs/heads/$branch"
+          pr="$(gh pr list --head "$branch" --base "$BASE_BRANCH" --state open \
+            --json number --jq '.[0].number // empty')"
+          if [[ -n "$pr" ]]; then
+            echo "Updated release PR #$pr."
+          else
+            gh pr create --head "$branch" --base "$BASE_BRANCH" \
+              --title "Release v$RELEASE_VERSION" \
+              --body 'Synchronizes the Rust and npm versions, updates Cargo.lock, and rebuilds the WebAssembly dist. Merge after reviewing the changes and passing CI. Publishing is manual.'
+          fi
