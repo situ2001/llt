@@ -1,0 +1,20 @@
+[workspace]
+resolver = "3"
+members = ["crates/llt", "packages/llt-wasm"]
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+unwrap_used = "deny"
+expect_used = "deny"
+uninlined_format_args = "deny"
+needless_pass_by_value = "deny"
+redundant_clone = "deny"
+allow_attributes_without_reason = "deny"
+unnecessary_wraps = "deny"
+unused_async = "deny"
+match_same_arms = "deny"
+fn_params_excessive_bools = "deny"
+undocumented_unsafe_blocks = "deny"
+excessive_nesting = "deny"
+similar_names = "deny"
+min_ident_chars = "deny"

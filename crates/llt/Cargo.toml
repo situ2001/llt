@@ -1,0 +1,24 @@
+[package]
+name = "llt"
+license = "MIT"
+publish = false
+description = "Offline Lulutong timetable parser and queries"
+repository = "https://github.com/situ2001/llt"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+zip = { version = "8.6.0", default-features = false, features = ["deflate"] }
+# Optional Serialize/Deserialize on the public data types, for binding
+# layers (wasm) and bridges that hand plain values to another language.
+serde = { version = "1", features = ["derive"], optional = true }
+
+[features]
+serde = ["dep:serde"]
+real-data-tests = []
+
+[dev-dependencies]
+serde_json = "1"
+
+[lints]
+workspace = true

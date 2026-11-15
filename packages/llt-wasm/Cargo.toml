@@ -1,0 +1,20 @@
+[package]
+name = "llt-wasm"
+license = "MIT"
+version = "0.1.1"
+edition = "2024"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+llt = { path = "../../crates/llt", features = ["serde"] }
+serde = "1"
+serde-wasm-bindgen = "0.6"
+# Must exactly match the wasm-bindgen CLI version used by
+# `pnpm run build:wasm` (installed CLI here: 0.2.104).
+wasm-bindgen = "=0.2.104"
+
+[lints]
+workspace = true

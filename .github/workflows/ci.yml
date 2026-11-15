@@ -1,0 +1,10 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  synthetic-fixture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test -p llt --test synthetic
+      - run: cargo check --workspace --all-targets --locked

@@ -1,0 +1,16 @@
+{
+  "name": "llt-wasm",
+  "version": "0.1.1",
+  "description": "WebAssembly bindings for the llt timetable library.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "types": "./llt.d.ts",
+  "main": "./llt.js",
+  "exports": {
+    ".": { "types": "./llt.d.ts", "import": "./llt.js", "default": "./llt.js" },
+    "./llt_bg.wasm": "./llt_bg.wasm"
+  },
+  "files": ["llt.js", "llt.d.ts", "llt_bg.wasm", "llt_bg.wasm.d.ts", "README.md"],
+  "engines": { "node": ">=24" }
+}
